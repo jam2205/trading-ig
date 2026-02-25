@@ -19,15 +19,21 @@ Workbook layout
 
 Requirements
 ------------
-    pip install trading-ig xlwings requests
+    pip install trading-ig xlwings requests python-dotenv
 
 Setup
 -----
-  1. Copy trading_ig_config.default.py → trading_ig_config.py and fill in your
-     IG credentials (username, password, api_key, acc_type, acc_number).
-  2. Set NEWSAPI_KEY below or export the env var:
-         export NEWSAPI_KEY="your_key_here"
-     Get a free key at https://newsapi.org/register
+  1. Copy .env.example → .env and fill in your IG Demo credentials:
+         IG_SERVICE_USERNAME=your_ig_email
+         IG_SERVICE_PASSWORD=your_ig_password
+         IG_SERVICE_API_KEY=your_ig_api_key
+         IG_SERVICE_ACC_TYPE=DEMO
+         IG_SERVICE_ACC_NUMBER=your_account_number
+         NEWSAPI_KEY=your_newsapi_key
+     .env is gitignored so credentials are never committed.
+  2. Get your IG Demo API key at:
+         My IG → API (top-right menu) → Create API key
+  3. Get a free NewsAPI key at https://newsapi.org/register
   3. Open Excel (Windows/macOS required for xlwings) and make sure
      IG_Forex_Live.xlsx is either open or accessible on disk.
   4. Run:
@@ -50,6 +56,13 @@ from math import isnan
 from threading import Event, Thread
 
 import requests
+
+# Load .env before importing trading_ig config so env vars are available
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # python-dotenv optional; set env vars manually or use a shell export
 
 from trading_ig import IGService, IGStreamService
 from trading_ig.config import config
